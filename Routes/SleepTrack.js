@@ -63,9 +63,11 @@ router.post('/getsleepbylimit', authTokenHandler, async (req, res) => {
         return res.json(createResponse(true, 'All sleep entries', user.sleep));
     } else {
         let date = new Date();
-        date.setDate(date.getDate() - parseInt(limit));
-        user.sleep = filterEntriesByDate(user.sleep, date);
+        let currentDate = new Date(date.setDate(date.getDate()-parseInt(limit))).getTime();
 
+        user.sleep = user.sleep.filter((item)=>{
+            return new Date(item.date).getTime() >= currentDate;
+        })
         return res.json(createResponse(true, `Sleep entries for the last ${limit} days`, user.sleep));
     }
 });

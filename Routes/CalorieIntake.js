@@ -113,8 +113,11 @@ router.post('/getcalorieintakebylimit', authTokenHandler, async (req, res) => {
     } 
     else {
         let date = new Date();
-        date.setDate(date.getDate() - parseInt(limit));
-        user.calorieIntake = filterEntriesByDate(user.calorieIntake, date);
+        let currentDate = new Date(date.setDate(date.getDate() - parseInt(limit))).getTime();
+        
+        user.calorieIntake = user.calorieIntake.filter((item)=>{
+            return new Date(item.date).getTime() >= currentDate;
+        });
 
         return res.json(createResponse(true, `Calorie intake for the last ${limit} days`, user.calorieIntake));
     }
